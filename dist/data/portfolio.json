@@ -1,0 +1,78 @@
+{
+  "name": "Addisu Taye Dadi",
+  "tagline": "Software Engineer | AI Enthusiast | Full Stack Developer",
+  "cta": "Contact Me",
+  "projects": [
+    {
+      "category": "Web Development",
+      "projects": [
+        {
+          "title": "Portfolio Website",
+          "description": "A personal portfolio website built with React and TailwindCSS.",
+          "tech": "React, TailwindCSS, Node.js",
+          "github": "https://github.com/addisu-portfolio",
+          "demo": "https://addisu-portfolio.com"
+        },
+        {
+          "title": "E-commerce Platform",
+          "description": "A full-featured e-commerce platform with Stripe integration.",
+          "tech": "React, Redux, Node.js, Express, MongoDB",
+          "github": "https://github.com/ecommerce-platform",
+          "demo": "https://ecommerce-platform.com"
+        }
+      ]
+    },
+    {
+      "category": "Mobile App Development",
+      "projects": [
+        {
+          "title": "Attendance Tracker App",
+          "description": "A mobile app for tracking attendance with offline and online sync features.",
+          "tech": "Flutter, Firebase, SQLite",
+          "github": "https://github.com/attendance-tracker",
+          "demo": "https://attendance-tracker.com"
+        }
+      ]
+    },
+    {
+      "category": "Machine Learning Projects",
+      "projects": [
+        {
+          "title": "AI Job Application Assistant",
+          "description": "An AI-powered job application manager that automates resume creation and job applications.",
+          "tech": "Python, TensorFlow, React, Django",
+          "github": "https://github.com/ai-job-assistant",
+          "demo": "https://ai-job-assistant.com"
+        }
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "category": "Frontend Development",
+      "skills": ["React", "TailwindCSS", "JavaScript", "HTML", "CSS"]
+    },
+    {
+      "category": "Backend Development",
+      "skills": ["Node.js", "Express", "Django", "Python", "MySQL", "MongoDB"]
+    },
+    {
+      "category": "Cloud & DevOps",
+      "skills": ["AWS", "Docker", "Kubernetes", "CI/CD"]
+    },
+    {
+      "category": "Machine Learning",
+      "skills": ["TensorFlow", "Keras", "Python", "Scikit-learn"]
+    }
+  ],
+  "resume": {
+    "pdfUrl": "/Addisu_Taye_Resume.pdf",
+    "downloadUrl": "/Addisu_Taye_Resume.pdf",
+    "message": "Feel free to download or view my resume."
+  },
+  "social": {
+    "LinkedIn": "https://www.linkedin.com/in/yourprofile",
+    "GitHub": "https://github.com/yourusername",
+    "Twitter": "https://twitter.com/yourhandle"
+  }
+}
