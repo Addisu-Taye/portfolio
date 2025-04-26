@@ -1,12 +1,13 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import HomePage from "./App"; // or "./HomePage" if you renamed the component
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from '@/App';
+import './index.css';
+import { ThemeProvider } from './context/ThemeContext'; // Import ThemeProvider
 
-import "./index.css"; // optional: for Tailwind or global styles
-
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <HomePage />
+    <ThemeProvider> {/* Wrap your App with ThemeProvider */}
+      <App />
+    </ThemeProvider>
   </React.StrictMode>
 );

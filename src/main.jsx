@@ -1,10 +1,14 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import "./index.css"; // Tailwind CSS should be imported here
-import HomePage from "./App"; // or wherever your component is
+// src/main.jsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './index.css';
+import { ThemeProvider } from './context/ThemeContext';
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <HomePage />
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
   </React.StrictMode>
 );

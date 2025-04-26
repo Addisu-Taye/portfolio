@@ -1,4 +1,11 @@
-export function CardContent({ children }) {
-    return <div className="p-2 text-sm text-gray-700 dark:text-gray-300">{children}</div>;
-  }
-  
+import React from "react";
+
+const CardContent = ({ children }) => {
+  return (
+    <div className="flex flex-col h-full">
+      {children}
+    </div>
+  );
+};
+
+export default CardContent;

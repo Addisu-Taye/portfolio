@@ -1,309 +1,309 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Card, CardContent } from "@/components/Card";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
-import { FaGithub, FaExternalLinkAlt, FaFilePdf, FaLinkedin, FaTwitter } from "react-icons/fa"; // Import more icons
+import { FaGithub, FaExternalLinkAlt, FaFilePdf, FaLinkedin, FaTwitter, FaMoon, FaSun, FaCaretDown, FaCaretRight } from "react-icons/fa";
+
+const SidebarItem = ({ label, children, isExpanded, onToggle }) => (
+  <div className="bg-white/60 dark:bg-gray-800/60 rounded-xl shadow-lg backdrop-blur-md p-2 transition-all">
+    <button
+      className="w-full text-left py-2 px-4 rounded-lg transition-colors duration-200 hover:bg-gradient-to-r hover:from-purple-400 hover:to-blue-400 dark:hover:from-indigo-700 dark:hover:to-purple-700 text-gray-700 dark:text-gray-300 font-semibold flex items-center justify-between"
+      onClick={onToggle}
+    >
+      {label}
+      {children && (isExpanded ? <FaCaretDown className="ml-2" /> : <FaCaretRight className="ml-2" />)}
+    </button>
+    {children && isExpanded && (
+      <ul className="ml-4 mt-2 space-y-1">
+        {children.map((child) => (
+          <li key={child.id}>
+            <button
+              className="w-full text-left py-1 px-3 rounded-md transition hover:bg-blue-100 dark:hover:bg-blue-900 text-sm text-gray-600 dark:text-gray-400"
+              onClick={child.onClick}
+            >
+              {child.label}
+            </button>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+);
 
 export default function HomePage() {
   const { theme, toggleTheme } = useTheme();
   const [homepageData, setHomepageData] = useState(null);
-  const [collapsedSections, setCollapsedSections] = useState({});
+  const [expandedSections, setExpandedSections] = useState({});
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [selectedSkillCategory, setSelectedSkillCategory] = useState(null);
+  const [activeSection, setActiveSection] = useState("blogs"); // Default to blogs
+  const projectsRef = useRef(null);
+  const skillsRef = useRef(null);
+  const blogsRef = useRef(null);
 
   useEffect(() => {
-    fetch("/data/portfolio.json")
+    fetch("portfolio.json")
       .then((res) => res.json())
       .then((data) => setHomepageData(data));
   }, []);
 
-  const toggleCategory = (category) => {
-    setCollapsedSections((prev) => ({
+  const toggleSection = (section) => {
+    setExpandedSections((prev) => ({
       ...prev,
-      [category]: !prev[category],
+      [section]: !prev[section],
     }));
+  };
+
+  const handleProjectClick = (project) => {
+    setSelectedProject(project);
+    setSelectedSkillCategory(null);
+  };
+
+  const handleSkillClick = (skillCategory) => {
+    setSelectedSkillCategory(skillCategory);
+    setSelectedProject(null);
+  };
+
+  const resetCenter = () => {
+    setSelectedProject(null);
+    setSelectedSkillCategory(null);
+  };
+
+  const scrollToSection = (section) => {
+    setActiveSection(section);
+    if (section === "projects" && projectsRef.current) {
+      projectsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else if (section === "skills" && skillsRef.current) {
+      skillsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else if (section === "blogs" && blogsRef.current) {
+      blogsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  const getVisibleBlogs = () => {
+    if (!homepageData?.blogsFeed) {
+      return [];
+    }
+    const currentDate = new Date();
+    return homepageData.blogsFeed.filter((feed) => {
+      const startDate = new Date(feed.startDate);
+      const endDate = new Date(feed.endDate);
+      return currentDate >= startDate && currentDate <= endDate;
+    });
   };
 
   if (!homepageData) return <div className="p-4 text-center">Loading...</div>;
 
+  const sidebarData = [
+    {
+      label: "Blogs",
+      id: "blogs-nav",
+      onClick: () => scrollToSection("blogs"),
+    },
+    {
+      label: "Skills",
+      id: "skills-nav",
+      onClick: () => scrollToSection("skills"),
+    },
+    {
+      label: "Projects",
+      id: "projects-nav",
+      onClick: () => scrollToSection("projects"),
+    },
+    {
+      label: "Resume",
+      id: "resume",
+      onClick: () => document.getElementById("resume-section")?.scrollIntoView({ behavior: "smooth" }),
+    },
+    {
+      label: "Contact",
+      id: "contact",
+      onClick: () => document.getElementById("contact-section")?.scrollIntoView({ behavior: "smooth" }),
+    },
+  ];
+
+  const visibleBlogs = getVisibleBlogs();
+
   return (
-    <main className="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen py-12 px-6 md:px-12 lg:px-24 transition-colors duration-300">
-      <div className="max-w-3xl mx-auto space-y-16">
-        {/* Header */}
-        <header className="flex justify-between items-center mb-8">
-          <h4 className="text-xl font-bold">{homepageData.name}</h4>
-        </header>
-
-        {/* Hero Section */}
-        <section className="py-8 text-center">
-          <motion.h4
-            className="text-3xl md:text-4xl font-bold mb-2"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            {homepageData.name}
-          </motion.h4>
-          <motion.p
-            className="text-base md:text-lg text-gray-600 dark:text-gray-400 mb-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            {homepageData.tagline}
-          </motion.p>
-          {/* GitHub Profile Picture */}
-          <div className="flex justify-center my-4">
-            <img
-              src={`https://github.com/Addisu-Taye.png`}
-              alt="GitHub Profile"
-              className="rounded-full w-24 h-24 border-2 border-blue-300 shadow-lg hover:scale-105 transition-transform duration-300"
-            />
-          </div>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.6, type: "spring", stiffness: 100 }}
-          >
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:shadow-lg transition-all text-sm md:text-base">
-              {homepageData.cta}
-            </Button>
-          </motion.div>
-        </section>
-
-        {/* Projects Section */}
-        <section className="space-y-8">
-          <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">
-            Projects
-          </h2>
-          {homepageData.projects.map((section) => (
-            <div key={section.category} className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-              <div
-                className="px-4 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                onClick={() => toggleCategory(section.category)}
+    <main className="bg-gradient-to-tr from-blue-100 via-purple-100 to-pink-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-gray-900 dark:text-gray-100 min-h-screen transition-all duration-300">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4">
+        {/* Left Sidebar */}
+        <aside className="md:col-span-1 sticky top-20 space-y-6 p-6">
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Explore</h3>
+          <nav className="space-y-4">
+            {sidebarData.map((item) => (
+              <button
+                key={item.id}
+                className="w-full text-left py-2 px-4 rounded-lg transition-colors duration-200 hover:bg-gradient-to-r hover:from-purple-400 hover:to-blue-400 dark:hover:from-indigo-700 dark:hover:to-purple-700 text-gray-700 dark:text-gray-300 font-semibold"
+                onClick={item.onClick}
               >
-                <h3 className="text-lg font-semibold text-gray-800 dark:text-white flex items-center justify-between">
-                  {section.category}
-                  <svg
-                    className={`w-4 h-4 transition-transform duration-300 ${
-                      collapsedSections[section.category] ? "rotate-180" : ""
-                    }`}
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </h3>
+                {item.label}
+              </button>
+            ))}
+          </nav>
+        </aside>
+
+        {/* Main Content */}
+        <section className="md:col-span-3 p-6 space-y-8">
+          {/* Header */}
+          <header className="sticky top-0 bg-inherit backdrop-blur-md py-4 z-20 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-4">
+              <motion.img
+                src={`https://github.com/Addisu-Taye.png`}
+                alt="Profile"
+                className="w-12 h-12 rounded-full border-2 border-blue-300 shadow-md"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8 }}
+              />
+              <div>
+                <h1 className="text-xl font-bold">{homepageData.name}</h1>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{homepageData.tagline}</p>
               </div>
-              {collapsedSections[section.category] && (
-                <div className="p-4 grid md:grid-cols-2 gap-4">
-                  {section.projects.map((project) => (
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => scrollToSection("blogs")}
+                variant={activeSection === "blogs" ? "default" : "outline"}
+              >
+                Blogs
+              </Button>
+              <Button
+                onClick={() => scrollToSection("projects")}
+                variant={activeSection === "projects" ? "default" : "outline"}
+              >
+                Projects
+              </Button>
+              <Button
+                onClick={() => scrollToSection("skills")}
+                variant={activeSection === "skills" ? "default" : "outline"}
+              >
+                Skills
+              </Button>
+              <Button onClick={toggleTheme} className="rounded-full p-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md">
+                {theme === 'dark' ? <FaSun className="h-5 w-5" /> : <FaMoon className="h-5 w-5" />}
+              </Button>
+            </div>
+          </header>
+
+          <div ref={blogsRef} className={activeSection === "blogs" ? "block space-y-6 mt-8" : "hidden"}>
+            <h2 className="text-2xl font-bold">My Feed</h2>
+            {visibleBlogs.map((feed) => (
+              <motion.div
+                key={feed.id}
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow p-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.1 }}
+              >
+                <div className="flex items-start gap-4">
+                  <img src={feed.avatar} alt={feed.author} className="w-10 h-10 rounded-full" />
+                  <div>
+                    <p className="font-semibold">{feed.author}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{feed.timestamp}</p>
+                    <p className="mt-2 text-gray-700 dark:text-gray-300">{feed.content}</p>
+                    {feed.image && (
+                      <img src={feed.image} alt="Feed Image" className="mt-4 rounded-md w-full object-cover" style={{ maxHeight: '300px' }} />
+                    )}
+                    <div className="mt-3 flex items-center gap-3 text-gray-600 dark:text-gray-400 text-sm">
+                      <button className="hover:text-blue-500">Like ({feed.likes || 0})</button>
+                      <button className="hover:text-blue-500">Comment ({feed.comments || 0})</button>
+                      <button className="hover:text-blue-500">Share</button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+            {!visibleBlogs.length && <p className="text-center text-gray-500 dark:text-gray-400">No relevant feed updates at the moment.</p>}
+          </div>
+
+          <div ref={projectsRef} className={activeSection === "projects" ? "block space-y-8 mt-8" : "hidden"}>
+            <h2 className="text-2xl font-bold">Projects</h2>
+            {homepageData.projects?.map((projectCategory) => (
+              <div key={projectCategory.category} id={`projects-category-${projectCategory.category}`} className="space-y-4">
+                <h3 className="text-xl font-semibold">{projectCategory.category}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {projectCategory.projects.map((project) => (
                     <motion.div
                       key={project.title}
-                      className="bg-gray-100 dark:bg-gray-900 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300"
-                      initial={{ opacity: 0, y: 10 }}
+                      className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-4 cursor-pointer hover:scale-105 transition-transform duration-300"
+                      onClick={() => handleProjectClick(project)}
+                      initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4, delay: 0.1 * section.projects.indexOf(project) }}
+                      transition={{ duration: 0.4, delay: 0.05 * projectCategory.projects.indexOf(project) }}
                     >
-                      <Card className="border-none">
-                        <CardContent className="space-y-2">
-                          <h4 className="text-md font-semibold text-gray-800 dark:text-white">
-                            {project.title}
-                          </h4>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
-                            {project.description}
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-500">
-                            Tech: {project.tech}
-                          </p>
-                          <div className="flex gap-2 mt-1">
-                            {project.github && (
-                              <a
-                                href={project.github}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors text-xs"
-                              >
-                                <FaGithub className="h-4 w-4" /> GitHub
-                              </a>
-                            )}
-                            {project.demo && (
-                              <a
-                                href={project.demo}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-purple-600 hover:text-purple-800 transition-colors text-xs"
-                              >
-                                <FaExternalLinkAlt className="h-4 w-4" /> Live Demo
-                              </a>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
+                      {project.image && (
+                        <img
+                          src={project.image}
+                          alt={project.title}
+                          className="rounded-md w-full h-32 object-cover mb-2"
+                        />
+                      )}
+                      <h4 className="font-semibold text-lg">{project.title}</h4>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">{project.description?.substring(0, 60)}...</p>
+                      <div className="flex gap-2 mt-2">
+                        {project.github && (
+                          <a href={project.github} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline text-sm flex items-center gap-1">
+                            <FaGithub className="h-4 w-4" /> GitHub
+                          </a>
+                        )}
+                        {project.demo && (
+                          <a href={project.demo} target="_blank" rel="noopener noreferrer" className="text-purple-500 hover:underline text-sm flex items-center gap-1">
+                            <FaExternalLinkAlt className="h-4 w-4" /> Demo
+                          </a>
+                        )}
+                      </div>
                     </motion.div>
                   ))}
                 </div>
-              )}
-            </div>
-          ))}
-        </section>
-
-        {/* Skills Section */}
-        <section className="space-y-6">
-          <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">
-            Skills
-          </h2>
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-            <div
-              className="px-4 py-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              onClick={() => toggleCategory("Skills")}
-            >
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white flex items-center justify-between">
-                Skills
-                <svg
-                  className={`w-4 h-4 transition-transform duration-300 ${
-                    collapsedSections["Skills"] ? "rotate-180" : ""
-                  }`}
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </h3>
-            </div>
-            {collapsedSections["Skills"] && (
-              <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                {homepageData.skills.map((section) => (
-                  <motion.div
-                    key={section.category}
-                    className="bg-gray-100 dark:bg-gray-900 rounded-md shadow-sm p-2"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3, delay: 0.05 * homepageData.skills.indexOf(section) }}
-                  >
-                    <h4 className="text-md font-semibold text-gray-800 dark:text-white mb-1">
-                      {section.category}
-                    </h4>
-                    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 text-xs">
-                      {section.skills.map((skill) => (
-                        <li key={skill}>{skill}</li>
-                      ))}
-                    </ul>
-                  </motion.div>
-                ))}
               </div>
-            )}
+            ))}
+            {!homepageData.projects?.flat().length && <p className="text-center text-gray-500 dark:text-gray-400">No projects available.</p>}
           </div>
-        </section>
 
-        {/* Contact Section */}
-        <section className="py-8 text-center">
-          <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">
-            Contact
-          </h2>
-          <p className="text-base text-gray-600 dark:text-gray-400 mb-3">
-            I'm always open to new opportunities and collaborations. Feel free to reach out!
-          </p>
-          <Button className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:shadow-lg transition-all text-sm md:text-base">
-            <a href={`mailto:${homepageData.email}`}>Email Me</a>
-          </Button>
-        </section>
-
-        {homepageData?.resume && (
-  <section className="py-8 text-center">
-    <h2 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">
-      Resume
-    </h2>
-    <div className="flex justify-center gap-4">
-      {/* Check if the PDF URL exists and create a button to view the PDF */}
-      {homepageData.resume.pdfUrl && (
-        <Button
-          as="a"
-          href={homepageData.resume.pdfUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:shadow-lg transition-all text-sm md:text-base inline-flex items-center"
-        >
-          <FaFilePdf className="mr-2" /> Read PDF
-        </Button>
-      )}
-      {/* Check if the download URL exists and create a button to download the resume */}
-      {homepageData.resume.downloadUrl && (
-        <Button
-          as="a"
-          href={homepageData.resume.downloadUrl}
-          download={`${homepageData.name}-resume.pdf`}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-full shadow-md hover:shadow-lg transition-all text-sm md:text-base inline-flex items-center"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-4 h-4 mr-2"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l3 4.5m-3-4.5v13.5"
-            />
-          </svg>
-          Download Resume
-        </Button>
-      )}
-    </div>
-    {/* Optional message for the resume section */}
-    {homepageData.resume.message && (
-      <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-        {homepageData.resume.message}
-      </p>
-    )}
-  </section>
-)}
-
-
-        {/* Footer */}
-        <footer className="text-center text-gray-500 dark:text-gray-400 py-6 border-t border-gray-200 dark:border-gray-700 text-sm">
-          <p>&copy; {new Date().getFullYear()} {homepageData.name}. All rights reserved.</p>
-          {homepageData.social && (
-            <div className="flex justify-center gap-3 mt-1">
-              {Object.entries(homepageData.social).map(([platform, link]) => {
-                const platformLower = platform.toLowerCase();
-                let icon;
-                if (platformLower === "linkedin") {
-                  icon = <FaLinkedin className="h-5 w-5" />;
-                } else if (platformLower === "github") {
-                  icon = <FaGithub className="h-5 w-5" />;
-                } else if (platformLower === "twitter") {
-                  icon = <FaTwitter className="h-5 w-5" />;
-                }
-                return (
-                  icon && (
-                    <a
-                      key={platform}
-                      href={link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
-                    >
-                      {icon}
-                    </a>
-                  )
-                );
-              })}
+          <div ref={skillsRef} className={activeSection === "skills" ? "block space-y-8 mt-8" : "hidden"}>
+            <h2 className="text-2xl font-bold">Skills</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {homepageData.skills?.map((skillCategory) => (
+                <div key={skillCategory.category} className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-4">
+                  <h3 className="text-xl font-semibold mb-2">{skillCategory.category}</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    {skillCategory.skills.map((skill) => (
+                      <motion.span
+                        key={skill}
+                        className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full px-3 py-1 text-sm font-medium"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.2, delay: 0.05 * skillCategory.skills.indexOf(skill) }}
+                      >
+                        {skill}
+                      </motion.span>
+                    ))}
+                  </div>
+                  {/* Button to view individual skill category */}
+                  {homepageData.skills.length > 0 && (
+                    <Button onClick={() => handleSkillClick(skillCategory)} variant="outline" className="mt-4 w-full">
+                      View {skillCategory.category} Skills
+                    </Button>
+                  )}
+                </div>
+              ))}
             </div>
-          )}
-        </footer>
+            {!homepageData.skills?.flat().length && <p className="text-center text-gray-500 dark:text-gray-400">No skills available.</p>}
+          </div>
+          {/* Resume Section */}
+          <section id="resume-section" className="hidden">
+            <h2 className="text-2xl font-bold">Resume</h2>
+            {/* Add your resume content here */}
+          </section>
+
+          {/* Contact Section */}
+          <section id="contact-section" className="hidden">
+            <h2 className="text-2xl font-bold">Contact</h2>
+            {/* Add your contact form or information here */}
+          </section>
+        </section>
       </div>
     </main>
   );
