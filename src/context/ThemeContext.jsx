@@ -1,35 +1,32 @@
-import { createContext, useState, useEffect, useContext } from 'react';
+// src/context/ThemeContext.js
+import { createContext, useContext, useState, useEffect } from 'react';
 
 const ThemeContext = createContext();
 
-export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState(() => {
-    // Initialize theme from local storage or default to light
-    const storedTheme = localStorage.getItem('theme');
-    return storedTheme === 'dark' ? 'dark' : 'light';
-  });
-
-  const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
-  };
+export function ThemeProvider({ children }) {
+  const [theme, setTheme] = useState('light');
 
   useEffect(() => {
-    // Update local storage whenever the theme changes
-    localStorage.setItem('theme', theme);
-    // Update the body class for Tailwind's dark mode
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [theme]);
+    // Check localStorage or system preference
+    const savedTheme = localStorage.getItem('theme') || 
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    
+    setTheme(savedTheme);
+    document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.classList.toggle('dark', newTheme === 'dark');
+  };
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-  {children}
-</ThemeContext.Provider>
+      {children}
+    </ThemeContext.Provider>
   );
-};
+}
 
-// src/context/ThemeContext.jsx
 export const useTheme = () => useContext(ThemeContext);

@@ -1,17 +1,14 @@
-import { useTheme } from "@/context/ThemeContext"; // Use ThemeContext
-import { Button } from "@/components/ui/button";
+import { useTheme } from '@/context/ThemeContext';
 
-export default function ThemeToggleButton() {
-  const { theme, toggleTheme } = useTheme(); // Get theme and toggle function from context
+const ThemeToggle = () => {
+  const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className="flex justify-end p-4">
-      <Button
-        onClick={toggleTheme} // Toggle theme using context
-        className="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:scale-105 transition-transform"
-      >
-        {theme === "dark" ? "🌞 Light Mode" : "🌙 Dark Mode"}
-      </Button>
-    </div>
+    <button
+      onClick={toggleTheme}
+      className="rounded-full p-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-md"
+    >
+      {theme === 'dark' ? <FaSun /> : <FaMoon />}
+    </button>
   );
-}
+};
