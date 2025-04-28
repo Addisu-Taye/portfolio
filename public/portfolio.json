@@ -63,6 +63,10 @@
     {
       "category": "Machine Learning",
       "skills": ["TensorFlow", "Keras", "Python", "Scikit-learn"]
+    },
+    {
+      "category": "Mobile Development",
+      "skills": ["Flutter", "Kotlin", "Java",  "Android Studio", "VSCode", "Jetpack", "Retrofit", "Firebase", "RESTful API", "Git"]
     }
   ],
   "resume": {

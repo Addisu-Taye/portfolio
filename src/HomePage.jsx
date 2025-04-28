@@ -292,17 +292,58 @@ export default function HomePage() {
             </div>
             {!homepageData.skills?.flat().length && <p className="text-center text-gray-500 dark:text-gray-400">No skills available.</p>}
           </div>
-          {/* Resume Section */}
-          <section id="resume-section" className="hidden">
-            <h2 className="text-2xl font-bold">Resume</h2>
-            {/* Add your resume content here */}
-          </section>
+{/* Resume Section */}
+<section id="resume-section" className="py-8">
+  <h2 className="text-2xl font-bold mb-4">Resume</h2>
+  {homepageData?.resume?.message && <p className="mb-4">{homepageData.resume.message}</p>}
+  <div className="flex gap-4">
+    {homepageData?.resume?.pdfUrl && (
+      <Button asChild>
+        <a href={homepageData.resume.pdfUrl} target="_blank" rel="noopener noreferrer">
+          <FaFilePdf className="mr-2" /> View Resume
+        </a>
+      </Button>
+    )}
+    {homepageData?.resume?.downloadUrl && (
+      <Button asChild>
+        <a href={homepageData.resume.downloadUrl} download="Addisu_Taye_Resume.pdf">
+          <FaFilePdf className="mr-2" /> Download Resume
+        </a>
+      </Button>
+    )}
+  </div>
+  {/* You could add more resume content or a summary here */}
+</section>
 
-          {/* Contact Section */}
-          <section id="contact-section" className="hidden">
-            <h2 className="text-2xl font-bold">Contact</h2>
-            {/* Add your contact form or information here */}
-          </section>
+{/* Contact Section */}
+<section id="contact-section" className="py-8">
+  <h2 className="text-2xl font-bold mb-4">Connect With Me</h2>
+  <p className="mb-4">You can find me on these platforms:</p>
+  <div className="flex gap-4">
+    {homepageData?.social?.LinkedIn && (
+      <a href={`https://${homepageData.social.LinkedIn}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-600">
+        <FaLinkedin className="h-6 w-6" />
+      </a>
+    )}
+    {homepageData?.social?.GitHub && (
+      <a href={homepageData.social.GitHub} target="_blank" rel="noopener noreferrer" className="text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400">
+        <FaGithub className="h-6 w-6" />
+      </a>
+    )}
+    {homepageData?.social?.Twitter && (
+      <a href={homepageData.social.Twitter} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-500">
+        <FaTwitter className="h-6 w-6" />
+      </a>
+    )}
+    {/* Add more social media platforms and their icons here if needed */}
+  </div>
+  {homepageData?.email && (
+    <p className="mt-4">
+      Or send me an email at: <a href={`mailto:${homepageData.email}`} className="text-purple-500 hover:underline">{homepageData.email}</a>
+    </p>
+  )}
+  {/* You could also add a contact form here */}
+</section>
         </section>
       </div>
     </main>
