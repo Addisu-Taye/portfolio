@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useTheme } from "@/context/ThemeContext";
 import { FaGithub, FaExternalLinkAlt, FaFilePdf, FaLinkedin, FaTwitter, FaMoon, FaSun, FaCaretDown, FaCaretRight } from "react-icons/fa";
-
+const isDevelopment = process.env.NODE_ENV === 'development';
+const pdfPath = isDevelopment ? '/Addisu_Taye_Resume.pdf' : '/portfolio/Addisu_Taye_Resume.pdf';
 const SidebarItem = ({ label, children, isExpanded, onToggle }) => (
   <div className="bg-white/60 dark:bg-gray-800/60 rounded-xl shadow-lg backdrop-blur-md p-2 transition-all">
     <button
@@ -292,6 +293,8 @@ export default function HomePage() {
             </div>
             {!homepageData.skills?.flat().length && <p className="text-center text-gray-500 dark:text-gray-400">No skills available.</p>}
           </div>
+          
+
 {/* Resume Section */}
 <section id="resume-section" className="py-8">
   <h2 className="text-2xl font-bold mb-4">Resume</h2>
@@ -299,20 +302,20 @@ export default function HomePage() {
   <div className="flex gap-4">
     {homepageData?.resume?.pdfUrl && (
       <Button asChild>
-        <a href={homepageData.resume.pdfUrl} target="_blank" rel="noopener noreferrer">
+        <a href={isDevelopment ? '/Addisu_Taye_Resume.pdf' : homepageData.resume.pdfUrl} target="_blank" rel="noopener noreferrer">
           <FaFilePdf className="mr-2" /> View Resume
         </a>
       </Button>
     )}
     {homepageData?.resume?.downloadUrl && (
       <Button asChild>
-        <a href={homepageData.resume.downloadUrl} download="Addisu_Taye_Resume.pdf">
+        <a href={isDevelopment ? '/Addisu_Taye_Resume.pdf' : homepageData.resume.downloadUrl} download="Addisu_Taye_Resume.pdf">
           <FaFilePdf className="mr-2" /> Download Resume
         </a>
       </Button>
     )}
   </div>
-  {/* You could add more resume content or a summary here */}
+  {/* ... */}
 </section>
 
 {/* Contact Section */}
