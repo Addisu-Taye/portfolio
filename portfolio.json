@@ -68,8 +68,7 @@
       "category": "Mobile Development",
       "skills": ["Flutter", "Kotlin", "Java",  "Android Studio", "VSCode", "Jetpack", "Retrofit", "Firebase", "RESTful API", "Git"]
     }
-    
-  ],
+      ],
   "resume": {
     "pdfUrl": "/Addisu_Taye_Resume.pdf",
     "downloadUrl": "/Addisu_Taye_Resume.pdf",
