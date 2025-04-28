@@ -250,13 +250,17 @@ export default function HomePage() {
   const skillsRef = useRef(null);
   const blogsRef = useRef(null);
 
-  // Effects
   useEffect(() => {
     fetch("/portfolio.json")
       .then((res) => res.json())
-      .then((data) => setHomepageData(data))
-      .catch((error) => console.error("Error loading data:", error));
+      .then((data) => {
+        setHomepageData(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching homepage data:", error);
+      });
   }, []);
+  
 
   // Handlers
   const toggleSection = (section) => {
